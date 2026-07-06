@@ -18,6 +18,13 @@
 
 # OpenEMR
 
+> **AgentForge Clinical Co-Pilot (Gauntlet AI, Week 1).** This fork hosts a
+> patient-specific, read-only clinical briefing & Q&A agent built on OpenEMR's
+> FHIR R4 API. Project docs at the repo root: [`PRD.md`](PRD.md) (product),
+> [`DECISIONS.md`](DECISIONS.md) (engineering decisions), and
+> [`SETUP.md`](SETUP.md) (local setup — Stage 1). Hard-gate deliverables
+> `AUDIT.md`, `USERS.md`, and `ARCHITECTURE.md` land here as later stages complete.
+
 [OpenEMR](https://open-emr.org) is a Free and Open Source electronic health records and medical practice management application. It features fully integrated electronic health records, practice management, scheduling, electronic billing, internationalization, free support, a vibrant community, and a whole lot more. It runs on Windows, Linux, Mac OS X, and many other platforms.
 
 ### Contributing
