@@ -1,5 +1,9 @@
 # Deploy (Stage 2 — Deploy It)
 
+**Active target: GCP Compute Engine** via `provision-gcp.sh` (see below). The
+AWS variant (`provision.sh`) is kept as a reference/fallback; the Docker Compose
+stack, Caddyfile, and nip.io TLS are identical across both.
+
 One-command deploy of the OpenEMR fork to a single EC2 instance, fronted by
 Caddy for automatic HTTPS. Satisfies the Stage 2 hard gate: a live, publicly
 reachable URL.

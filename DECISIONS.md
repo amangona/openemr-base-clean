@@ -127,12 +127,14 @@ Known limitation (documented deliberately): the claim-support check is model-bas
 
 ### 15. Deployment & Operations
 
-**Decision: AWS EC2, single instance (~t3.xlarge, 4 vCPU/16 GB), running the full docker compose stack** (OpenEMR + MariaDB + agent + Langfuse + its Postgres), Caddy or nginx for TLS.
+**Decision: GCP Compute Engine, single instance (`e2-standard-4`, 4 vCPU/16 GB), running the full docker compose stack** (OpenEMR + MariaDB + agent + Langfuse + its Postgres), Caddy for TLS (Let's Encrypt via a `<ip>.nip.io` domain until a custom domain is set).
 
-- History: Railway/Render was briefly selected on 2026-07-06, reversed same day — Render has no managed MySQL (Postgres only) and OpenEMR's stateful compose stack fits PaaS poorly.
-- Scaling narrative for interviews: MariaDB → RDS, agent → ECS behind ALB, all inside one VPC (PHI never leaves).
+- History: (1) Railway/Render briefly selected 2026-07-06, reversed same day — Render has no managed MySQL and OpenEMR's stateful compose stack fits PaaS poorly. (2) AWS EC2 selected next, then reversed 2026-07-06 evening — Abe has more GCP experience (dominant factor in a 1-week sprint) and the AWS account hit `OptInRequired` (unactivated billing), while his GCP account was ready. GCP also *improves* the story: **Cloud SQL provides managed MySQL** (the exact gap that killed Render), and **Claude via Vertex AI** is a same-cloud HIPAA-eligible BAA path, so PHI never leaves GCP and there's one BAA counterparty instead of two.
+- Deploy target: project `agentforge-clinical-28852` (under abemangona@gmail.com, billing "My Billing Account"). Provisioned by `deploy/provision-gcp.sh` + `deploy/gcp-startup.sh`.
+- Scaling narrative for interviews: MariaDB → Cloud SQL (MySQL), agent → Cloud Run / GKE, all inside one VPC (PHI never leaves).
 - CI/CD: GitHub Actions (lint → tests → evals → build → deploy on merge); rollback via tagged images.
 - Budget: ~$60–70/month.
+- LLM path note: with the agent on GCP, prefer Claude via Vertex AI for a same-cloud BAA (see `AUDIT.md` §5); the direct Anthropic API + BAA remains a fallback. Model choice (Opus 4.8 + Haiku 4.5) is unchanged and ZDR/retention-compatible.
 
 ### 16. Iteration Planning
 
