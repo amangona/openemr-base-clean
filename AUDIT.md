@@ -65,7 +65,7 @@ if* treated as a PHI system (RBAC, encryption, retention).
 The agent runs as a standalone `copilot/` service talking only to
 `/apis/default/fhir/*` over OAuth2; the API tier is effectively stateless behind
 MariaDB (tokens resolve via the `api_token` table), which is also our
-MariaDB→RDS / agent→ECS scaling story. The FHIR API is read-mostly (only
+MariaDB→Cloud SQL / agent→Cloud Run scaling story. The FHIR API is read-mostly (only
 Patient/Practitioner/Organization accept writes) — irrelevant to us because the
 agent is read-only by design.
 
@@ -176,8 +176,8 @@ fully external, supported surface, keeping the fork rebasable against upstream.
 **Scaling inputs (interview narrative):** API tier is **stateless behind
 MariaDB** (`SessionCleanupListener`, `ApiApplication.php:85`); only the legacy UI
 uses PHP sessions (optional Redis handler, `SessionUtil.php:44-58`). So
-MariaDB→RDS is clean (single mandatory datastore; CouchDB optional), agent→ECS as
-its own service, all in one VPC (PHI never leaves).
+MariaDB→Cloud SQL is clean (single mandatory datastore; CouchDB optional),
+agent→Cloud Run/GKE as its own service, all in one VPC (PHI never leaves).
 
 **Risks:** (A-1) read-mostly API means any future write path needs the
 proprietary REST API or a module — keep the agent read-only; (A-2) UUID/pid

@@ -165,4 +165,5 @@ Known limitation (documented deliberately): the claim-support check is model-bas
 |---|---|
 | 2026-07-06 | Initial record — all 16 items decided. |
 | 2026-07-06 | Deployment changed Railway/Render → AWS EC2 (Render lacks managed MySQL; PaaS fit poor for stateful compose stack). |
+| 2026-07-06 | Deployment changed AWS EC2 → GCP Compute Engine (Abe's GCP fluency; AWS account unactivated; GCP adds Cloud SQL managed MySQL + Vertex AI same-cloud BAA). Live at `agentforge-clinical-28852`. |
 | 2026-07-06 | BMAD-METHOD adopted for build phase only (Wed–Sun, `copilot/` service); declined for planning phase — hard-gate docs have spec-mandated shapes, planning already complete. |
