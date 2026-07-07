@@ -251,8 +251,11 @@ explicit **zero-data-retention (ZDR)** arrangement is required. **Model
 constraint:** Claude Fable 5 requires 30-day retention and errors for ZDR orgs;
 **our `DECISIONS.md` §6 choice of Opus 4.8 + Haiku 4.5 is ZDR-compatible** —
 this is a compliance constraint to *preserve* (don't "upgrade" to Fable 5 for
-the clinical path). Alternative procurement: Claude via AWS Bedrock / GCP Vertex
-under those platforms' BAAs. Residual risks to document in the §164.308(a)(1)
+the clinical path). **Preferred procurement given the GCP deploy
+(`DECISIONS.md` §15): Claude via GCP Vertex AI** — a same-cloud, HIPAA-eligible
+BAA path, so PHI never leaves Google's boundary and there is a single BAA
+counterparty; the direct Anthropic API (or AWS Bedrock) remains a fallback.
+Residual risks to document in the §164.308(a)(1)
 risk analysis: transient provider-side processing, abuse-detection metadata,
 config drift (a key created outside the ZDR-scoped org silently loses the
 posture — pin the org, audit keys), and prompt-injection causing over-fetch of
