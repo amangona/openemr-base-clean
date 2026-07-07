@@ -1,0 +1,15 @@
+# Caddy reverse proxy — automatic HTTPS via Let's Encrypt.
+# {$DOMAIN} is injected from the environment (e.g. 1-2-3-4.nip.io).
+# OpenEMR serves HTTPS internally with a self-signed cert, so we proxy over
+# TLS and skip verification on the internal hop only.
+
+{$DOMAIN} {
+	reverse_proxy https://openemr:443 {
+		transport http {
+			tls
+			tls_insecure_skip_verify
+		}
+		header_up Host {upstream_hostport}
+		header_up X-Forwarded-Proto https
+	}
+}

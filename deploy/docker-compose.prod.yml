@@ -1,0 +1,79 @@
+# AgentForge Clinical Co-Pilot — production deploy stack (Stage 2)
+#
+# Fronts the stock OpenEMR production stack with Caddy for automatic HTTPS.
+# The OpenEMR + MariaDB services mirror docker/production/docker-compose.yml
+# (stock openemr/openemr:latest image). Caddy terminates TLS on 80/443 and
+# reverse-proxies to OpenEMR's internal 443 (self-signed, verified skipped).
+#
+# NOTE: this deploys the OpenEMR base as-is. Once the copilot/ agent service
+# exists we add it here (plus Langfuse + its Postgres) and switch OpenEMR to an
+# image built from this fork. Tracked in DECISIONS.md §15.
+#
+# Required env (see .env.prod.example): DOMAIN (e.g. 1.2.3.4.nip.io),
+# MYSQL_ROOT_PASSWORD, MYSQL_PASS, OE_PASS.
+
+services:
+  mysql:
+    restart: always
+    image: mariadb:11.8.8
+    command: ['mariadbd', '--character-set-server=utf8mb4']
+    volumes:
+      - databasevolume:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set in .env.prod}
+    healthcheck:
+      test: ['CMD', '/usr/local/bin/healthcheck.sh', '--su-mysql', '--connect', '--innodb_initialized']
+      start_period: 1m
+      start_interval: 10s
+      interval: 1m
+      timeout: 5s
+      retries: 3
+
+  openemr:
+    restart: always
+    image: openemr/openemr:latest
+    volumes:
+      - logvolume01:/var/log
+      - sitevolume:/var/www/localhost/htdocs/openemr/sites
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_ROOT_PASS: ${MYSQL_ROOT_PASSWORD:?set in .env.prod}
+      MYSQL_USER: openemr
+      MYSQL_PASS: ${MYSQL_PASS:?set in .env.prod}
+      OE_USER: admin
+      OE_PASS: ${OE_PASS:?set in .env.prod}
+      # Harden vs the dev image (see AUDIT.md): disable ROPC password grant.
+      OPENEMR_SETTING_oauth_password_grant: 0
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', '/usr/bin/curl', '--fail', '--insecure', '--silent', 'https://localhost/meta/health/readyz']
+      start_period: 5m
+      start_interval: 15s
+      interval: 1m
+      timeout: 5s
+      retries: 3
+
+  caddy:
+    restart: always
+    image: caddy:2
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddydata:/data
+      - caddyconfig:/config
+    environment:
+      DOMAIN: ${DOMAIN:?set in .env.prod}
+    depends_on:
+      openemr:
+        condition: service_healthy
+
+volumes:
+  logvolume01: {}
+  sitevolume: {}
+  databasevolume: {}
+  caddydata: {}
+  caddyconfig: {}

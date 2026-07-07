@@ -51,3 +51,7 @@ docker/development-easy-redis/docker-compose.override.yml
 compose.override.yml
 tmp/
 .webpack-cache/
+
+# AgentForge deploy secrets
+deploy/.env.prod
+deploy/*.pem
