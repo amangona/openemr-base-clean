@@ -140,6 +140,21 @@ Known limitation (documented deliberately): the claim-support check is model-bas
 - Feedback: thumbs up/down per response, stored with correlation ID → links to full trace.
 - Prioritization = the checkpoint schedule: MVP (Tue), Early Submission (Thu), Final (Sun noon CT).
 
+### 17. Development Process (added 2026-07-06)
+
+**Decision: BMAD-METHOD (v6), scoped to the build phase only (Wed–Sun).**
+
+- Evaluated for full adoption on 2026-07-06; declined for the planning phase: PRD/decision
+  work was already done, the hard-gate docs (`AUDIT.md`, `USERS.md`, `ARCHITECTURE.md`)
+  have spec-mandated shapes BMAD's templates don't match, and adopting a 12-persona
+  framework the day before Architecture Defense is process cost with no checkpoint payoff.
+- Scoped use: install after MVP docs are committed (Tue night). Brownfield flow ingests the
+  existing docs — never regenerates them. Architect-persona checklist as a *reviewer* of
+  `ARCHITECTURE.md`; story-sharded dev cycle (SM → Dev → QA personas) for the `copilot/`
+  service. Stories live under `copilot/docs/stories/`; BMAD scaffolding stays out of the
+  graded repo root.
+- Standing guardrail applies: every story must trace to UC-1..3 / FR / NFR in `PRD.md`.
+
 ---
 
 ## Change log
@@ -148,3 +163,4 @@ Known limitation (documented deliberately): the claim-support check is model-bas
 |---|---|
 | 2026-07-06 | Initial record — all 16 items decided. |
 | 2026-07-06 | Deployment changed Railway/Render → AWS EC2 (Render lacks managed MySQL; PaaS fit poor for stateful compose stack). |
+| 2026-07-06 | BMAD-METHOD adopted for build phase only (Wed–Sun, `copilot/` service); declined for planning phase — hard-gate docs have spec-mandated shapes, planning already complete. |
