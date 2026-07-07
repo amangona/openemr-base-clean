@@ -4,9 +4,16 @@ One-command deploy of the OpenEMR fork to a single cloud VM, fronted by Caddy
 for automatic HTTPS. Satisfies the Stage 2 hard gate: a live, publicly reachable
 URL.
 
-**Active target: GCP Compute Engine** (`provision-gcp.sh`). The AWS variant
-(`provision.sh`) is kept as a reference/fallback; the Docker Compose stack,
-`Caddyfile`, and nip.io TLS are identical across both.
+**Active target: GCP Compute Engine.** Two steps: `provision-gcp.sh` creates the
+VM + firewall, then `deploy-fork-gcp.sh` (run on the VM) deploys the **fork's
+own source at 8.2.0-dev** via the flex image behind Caddy, and loads demo +
+Synthea patients. This version-matches the live instance to local dev and
+`AUDIT.md` — the faithful "deploy your fork."
+
+`docker-compose.prod.yml` (stock `openemr/openemr:latest`, currently 8.0.0.3) is
+kept as a slim single-image reference but is **not** the live path — the release
+image lags the fork's 8.2.0-dev and ships no devtools for demo data. The AWS
+`provision.sh` is a portability fallback.
 
 ## What it stands up
 
